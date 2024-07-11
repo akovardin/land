@@ -18,16 +18,14 @@ import (
 
 func main() {
 	fx.New(
-		fx.Provide(app),
+		fx.Provide(pocketbase.New),
 		fx.Provide(template.NewRegistry),
 		fx.Provide(handlers.NewLanding),
-		fx.Invoke(func(*pocketbase.PocketBase) {}),
+		fx.Invoke(routing),
 	).Run()
 }
 
-func app(lc fx.Lifecycle, registry *template.Registry, landing *handlers.Landing) *pocketbase.PocketBase {
-	app := pocketbase.New()
-
+func routing(app *pocketbase.PocketBase, lc fx.Lifecycle, registry *template.Registry, landing *handlers.Landing) {
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 
 		e.Router.GET("/l/:name", landing.Home)
@@ -64,6 +62,4 @@ func app(lc fx.Lifecycle, registry *template.Registry, landing *handlers.Landing
 			return nil
 		},
 	})
-
-	return app
 }
