@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"net/url"
 
 	"github.com/labstack/echo/v5"
@@ -15,6 +14,7 @@ import (
 	"go.uber.org/fx"
 
 	"gohome.4gophers.ru/kovardin/land/app/handlers"
+	"gohome.4gophers.ru/kovardin/land/app/tasks"
 	"gohome.4gophers.ru/kovardin/land/static"
 )
 
@@ -23,24 +23,17 @@ func main() {
 		fx.Provide(pocketbase.New),
 		fx.Provide(template.NewRegistry),
 		fx.Provide(handlers.NewLanding),
-		fx.Invoke(routing),
+		fx.Provide(tasks.NewUploader),
+		fx.Invoke(
+			routing,
+		),
+		fx.Invoke(
+			task,
+		),
 	).Run()
 }
 
 func routing(app *pocketbase.PocketBase, lc fx.Lifecycle, registry *template.Registry, landing *handlers.Landing) {
-	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		scheduler := cron.New()
-
-		// prints "Hello!" every 2 minutes
-		scheduler.MustAdd("hello", "*/2 * * * *", func() {
-			log.Println("Hello!")
-		})
-
-		scheduler.Start()
-
-		return nil
-	})
-
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 
 		e.Router.GET("/l/:name", landing.Home)
@@ -76,5 +69,20 @@ func routing(app *pocketbase.PocketBase, lc fx.Lifecycle, registry *template.Reg
 		OnStop: func(ctx context.Context) error {
 			return nil
 		},
+	})
+}
+
+func task(app *pocketbase.PocketBase, uploader *tasks.Uploader) {
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		scheduler := cron.New()
+
+		// prints "Hello!" every 2 minutes
+		scheduler.MustAdd("hello", "*/2 * * * *", func() {
+			uploader.Do()
+		})
+
+		scheduler.Start()
+
+		return nil
 	})
 }
