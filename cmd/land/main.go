@@ -4,11 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/url"
 
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
+	"github.com/pocketbase/pocketbase/tools/cron"
 	"github.com/pocketbase/pocketbase/tools/template"
 	"go.uber.org/fx"
 
@@ -26,6 +28,19 @@ func main() {
 }
 
 func routing(app *pocketbase.PocketBase, lc fx.Lifecycle, registry *template.Registry, landing *handlers.Landing) {
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		scheduler := cron.New()
+
+		// prints "Hello!" every 2 minutes
+		scheduler.MustAdd("hello", "*/2 * * * *", func() {
+			log.Println("Hello!")
+		})
+
+		scheduler.Start()
+
+		return nil
+	})
+
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 
 		e.Router.GET("/l/:name", landing.Home)

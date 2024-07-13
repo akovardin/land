@@ -7,7 +7,9 @@ import (
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/apis"
+	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/tools/template"
+	"go.uber.org/zap"
 
 	"gohome.4gophers.ru/kovardin/land/views"
 )
@@ -28,7 +30,7 @@ func (l *Landing) Home(c echo.Context) error {
 	slug := c.PathParam("name")
 	landing, err := l.app.Dao().FindFirstRecordByFilter(
 		"landings",
-		"slug = {:slug}",
+		"slug = {:slug} && enabled = true",
 		dbx.Params{"slug": slug},
 	)
 	if err != nil {
@@ -42,6 +44,18 @@ func (l *Landing) Home(c echo.Context) error {
 	)
 	if err != nil {
 		return apis.NewNotFoundError("", err)
+	}
+
+	features, err := l.app.Dao().FindRecordsByFilter(
+		"features",
+		"landing.slug = {:slug} && enabled = true",
+		"-created",
+		4,
+		0,
+		dbx.Params{"slug": slug},
+	)
+	if err != nil {
+		features = []*models.Record{}
 	}
 
 	// todo: parse
@@ -65,7 +79,12 @@ func (l *Landing) Home(c echo.Context) error {
 		// counters
 		"yandexCounter": landing.GetString("yandex_counter"),
 		"mtCounter":     landing.GetString("mt_counter"),
+
+		// features
+		"features": features,
 	})
+
+	l.app.Logger().Info("features", zap.Any("f", features))
 
 	if err != nil {
 		return apis.NewNotFoundError("", err)
@@ -75,13 +94,36 @@ func (l *Landing) Home(c echo.Context) error {
 }
 
 func (l *Landing) Terms(c echo.Context) error {
-	name := c.PathParam("name")
+	slug := c.PathParam("name")
+	landing, err := l.app.Dao().FindFirstRecordByFilter(
+		"landings",
+		"slug = {:slug} && enabled = true",
+		dbx.Params{"slug": slug},
+	)
+	if err != nil {
+		return apis.NewNotFoundError("", err)
+	}
+
+	privacy, err := l.app.Dao().FindFirstRecordByFilter(
+		"terms",
+		"landing.slug = {:slug}",
+		dbx.Params{"slug": slug},
+	)
+	if err != nil {
+		return apis.NewNotFoundError("", err)
+	}
+
+	appurl := l.app.Settings().Meta.AppUrl + "/l/" + slug + "terms/"
 
 	html, err := l.registry.LoadFS(views.FS,
 		"layout.html",
 		"terms.html",
 	).Render(map[string]any{
-		"name": name,
+		"slug":      slug,
+		"metaTitle": landing.GetString("title"),
+		"appname":   landing.GetString("appname"),
+		"developer": privacy.GetString("developer"),
+		"appurl":    appurl,
 	})
 
 	if err != nil {
@@ -93,6 +135,15 @@ func (l *Landing) Terms(c echo.Context) error {
 
 func (l *Landing) Privacy(c echo.Context) error {
 	slug := c.PathParam("name")
+	landing, err := l.app.Dao().FindFirstRecordByFilter(
+		"landings",
+		"slug = {:slug} && enabled = true",
+		dbx.Params{"slug": slug},
+	)
+	if err != nil {
+		return apis.NewNotFoundError("", err)
+	}
+
 	privacy, err := l.app.Dao().FindFirstRecordByFilter(
 		"privacy",
 		"landing.slug = {:slug}",
@@ -108,7 +159,9 @@ func (l *Landing) Privacy(c echo.Context) error {
 		"layout.html",
 		"privacy.html",
 	).Render(map[string]any{
-		"appname":          privacy.GetString("appname"),
+		"slug":             slug,
+		"metaTitle":        landing.GetString("title"),
+		"appname":          landing.GetString("appname"),
 		"developer":        privacy.GetString("developer"),
 		"collectFio":       privacy.GetBool("collectFio"),
 		"collectPhone":     privacy.GetBool("collectPhone"),
