@@ -92,13 +92,30 @@ func (l *Landing) Terms(c echo.Context) error {
 }
 
 func (l *Landing) Privacy(c echo.Context) error {
-	name := c.PathParam("name")
+	slug := c.PathParam("name")
+	privacy, err := l.app.Dao().FindFirstRecordByFilter(
+		"privacy",
+		"landing.slug = {:slug}",
+		dbx.Params{"slug": slug},
+	)
+	if err != nil {
+		return apis.NewNotFoundError("", err)
+	}
+
+	appurl := l.app.Settings().Meta.AppUrl + "/l/" + slug + "privacy/"
 
 	html, err := l.registry.LoadFS(views.FS,
 		"layout.html",
 		"privacy.html",
 	).Render(map[string]any{
-		"name": name,
+		"appname":          privacy.GetString("appname"),
+		"developer":        privacy.GetString("developer"),
+		"collectFio":       privacy.GetBool("collectFio"),
+		"collectPhone":     privacy.GetBool("collectPhone"),
+		"collectAnalytics": privacy.GetBool("collectAnalytics"),
+		"collectEmail":     privacy.GetBool("collectEmail"),
+		"email":            privacy.GetString("email"),
+		"appurl":           appurl,
 	})
 
 	if err != nil {
