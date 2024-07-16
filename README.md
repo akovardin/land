@@ -13,4 +13,6 @@
 
 ## Связываем с Яндекс директом
 
+https://redirect.appmetrica.yandex.com/serve/821509867285037527?yclid=333
+
 ## Связываем с VK рекламой

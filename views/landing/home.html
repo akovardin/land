@@ -79,7 +79,7 @@ if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, fal
       }
 
       var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-      var link = "{{.link}}"
+      var link = "{{.link}}?referrerId=" + escape(referrer)
       var base = "{{.base}}"
       var referrer = "client_id=" + clientid + "&yclid=" + yclid + "&rb_clickid=" + rbclickid + "&click_id=" + clickid
 
