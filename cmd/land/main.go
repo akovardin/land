@@ -20,9 +20,10 @@ import (
 
 func main() {
 	fx.New(
+		handlers.Module,
+
 		fx.Provide(pocketbase.New),
 		fx.Provide(template.NewRegistry),
-		fx.Provide(handlers.NewLanding),
 		fx.Provide(tasks.NewUploader),
 		fx.Invoke(
 			routing,
@@ -33,12 +34,19 @@ func main() {
 	).Run()
 }
 
-func routing(app *pocketbase.PocketBase, lc fx.Lifecycle, registry *template.Registry, landing *handlers.Landing) {
+func routing(
+	app *pocketbase.PocketBase,
+	lc fx.Lifecycle,
+	registry *template.Registry,
+	landing *handlers.Landing,
+	conversions *handlers.Conversions,
+) {
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 
 		e.Router.GET("/l/:name", landing.Home)
 		e.Router.GET("/l/:name/terms", landing.Terms)
 		e.Router.GET("/l/:name/privacy", landing.Privacy)
+		e.Router.GET("/l/:name/fire", conversions.Fire)
 
 		e.Router.GET("/static/*", func(c echo.Context) error {
 			p := c.PathParam("*")

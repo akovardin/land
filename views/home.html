@@ -3,15 +3,36 @@
 {{end}}
 
 {{define "counters"}}
-  {{.yandexCounter | raw}}
 
-  {{.mtCounter | raw}}
+<!-- Top.Mail.Ru counter -->
+<script type="text/javascript">
+var _tmr = window._tmr || (window._tmr = []);
+_tmr.push({id: "{{.mtCounter}}", type: "pageView", start: (new Date()).getTime()});
+(function (d, w, id) {
+if (d.getElementById(id)) return;
+var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
+ts.src = "https://top-fwz1.mail.ru/js/code.js";
+var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
+if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+})(document, window, "tmr-code");
+</script>
+<noscript><div><img src="https://top-fwz1.mail.ru/counter?id={{.mtCounter}};js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
+<!-- /Top.Mail.Ru counter -->
 
   {{/*  логика для настройки трекинга */}}
   <script>
-  // client id
-  // user id
-  // yclid
+
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+   m[i].l=1*new Date();
+   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+   ym({{.yandexCounter}}, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true
+   });
 
   function setCookie(name, value, days){
       var date = new Date();
@@ -26,9 +47,6 @@
 
   var yclid = getParam('yclid');
   var rbclickid = getParam('rb_clickid');
-
-  console.log(yclid);
-  console.log(rbclickid)
 
   if(yclid){
       setCookie('yclid', yclid, 90);
@@ -49,13 +67,9 @@
       return ""; 
   } 
 
-  ym(94618529, "getClientID", function(clientid) {
-      var yclid = readCookie('yclid');
-      var rbclickid = readCookie('rbclickid'); 
-
-      console.log(clientid);
-      console.log(yclid);
-      console.log(rbclickid);
+  ym({{.yandexCounter}}, "getClientID", function(clientid) {
+      var yclid = readCookie('yclid'); // реклама yandex
+      var rbclickid = readCookie('rbclickid'); // реклама vk
 
       var clickid = "";
       if (yclid != "") {
@@ -64,23 +78,30 @@
           clickid = rbclickid;
       }
 
-      // 5.255.199.20 - - [19/Aug/2023:13:37:53 +0000] "GET /converiosn?client_id=&yclid=&install_timestamp=1692450277&appmetrica_device_id=210984208791634541 HTTP/1.1" 404 118 "-" "Mozilla/5.0 (compatible; YandexMetrika/2.0; +http://yandex.com/bots)"
-      // https://downloader.getapp.store/?etext=2202.zVTTRXD9xV7d2REq4cSxQA21UKTDHTI0y2j6mjetGO7nI7m2AqCL2cG-bIG-KLB4anl4enV1bmNxdHJhcnF1aQ.c23308e73aab2e0004faa165bdd90e83c0aa3366&yclid=4790967650713410789
-      // https://redirect.appmetrica.yandex.com/serve/172510023551860628?client_id=16473741184545452201605&yclid=4790967650713411107823239
-      var apkLink = "https://redirect.appmetrica.yandex.com/serve/172510023551860628?client_id=" + clientid + "&yclid=" + yclid + "&rb_clickid=" + rbclickid + "&click_id=" + clickid;
-      var rustoreLink = "https://redirect.appmetrica.yandex.com/serve/1109250139903542573?client_id=" + clientid + "&yclid=" + yclid + "&rb_clickid=" + rbclickid + "&click_id=" + clickid;
-  
-      // #download-common
-      // #download-apk
-      // #download-rustore
+      var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      var link = "{{.link}}"
+      var base = "{{.base}}"
+      var referrer = "client_id=" + clientid + "&yclid=" + yclid + "&rb_clickid=" + rbclickid + "&click_id=" + clickid
 
-      document.getElementById("download-common").href = apkLink;
-      document.getElementById("download-apk").href = apkLink;
-      document.getElementById("download-rustore").href = rustoreLink;
+      var intent = "intent://apps.rustore.ru/app/" + base + "?referrerId=" + escape(referrer) + "#Intent;scheme=rustore;package=ru.vk.store;"
+	    var androidFallback = "S.browser_fallback_url=" + escape("{{.androidLink}}?referrer="+escape(referrer)) + ";end"
+	    var huaweiFallback = "S.browser_fallback_url=" + escape("{{.huaweiLink}}?referrer="+escape(referrer))  + ";end"
+	    var directFallback = "S.browser_fallback_url=" + escape("{{.directLink}}?"+referrer) + ";end"
 
-      // https://getapp.store/converiosn?client_id={client_id}&yclid={yclid}&install_timestamp={install_timestamp}&appmetrica_device_id={appmetrica_device_id}
+      var androidLink = intent + androidFallback
+      var huaweiLink = intent + androidFallback
+
+      if (/huawei/i.test(userAgent)) {
+        document.getElementById("download-button").href = huaweiLink;
+      } else if (/android/i.test(userAgent)) {
+        document.getElementById("download-button").href = androidLink;
+      } else {
+        document.getElementById("download-button").href = link;
+      }
   });
-  </script>
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/{{.yandexCounter}}" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 {{end}}
 
 {{define "body"}}
@@ -116,7 +137,8 @@
 
             </script>
 
-            <a class="btn btn-primary btn-lg" role="button" href="intent://apps.rustore.ru/app/com.roblox.client#Intent;scheme=rustore;package=ru.vk.store;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.roblox.client%26hl%3Den;end">Скачать приложение</a>
+
+            <a id="download-button" class="btn btn-primary btn-lg" role="button" href="intent://apps.rustore.ru/app/com.roblox.client#Intent;scheme=rustore;package=ru.vk.store;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.roblox.client%26hl%3Den;end">Скачать приложение</a>
 
           </div>
           

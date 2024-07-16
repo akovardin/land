@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"net/http"
+	"net/url"
+	"path"
 
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/dbx"
@@ -58,7 +60,12 @@ func (l *Landing) Home(c echo.Context) error {
 		features = []*models.Record{}
 	}
 
-	// todo: parse
+	link := home.GetString("rustore_link")
+
+	parts, _ := url.Parse(link)
+	base := path.Base(parts.Path)
+
+	// var rustoreLink = "intent://apps.rustore.ru/app/com.roblox.client#Intent;scheme=rustore;package=ru.vk.store;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.roblox.client%26hl%3Den;end";
 
 	html, err := l.registry.LoadFS(views.FS,
 		"layout.html",
@@ -72,9 +79,11 @@ func (l *Landing) Home(c echo.Context) error {
 		"description":     home.GetString("description"),
 
 		// links
-		"rustoreLink": home.GetString("rustore_link"),
+		"link":        link,
+		"base":        base,
 		"androidLink": home.GetString("android_link"),
-		"huaweiLink":  home.GetString("android_link"),
+		"huaweiLink":  home.GetString("huawei_link"),
+		"directLink":  home.GetString("direct_link"),
 
 		// counters
 		"yandexCounter": landing.GetString("yandex_counter"),

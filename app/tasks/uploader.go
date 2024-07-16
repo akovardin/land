@@ -10,5 +10,6 @@ func NewUploader() *Uploader {
 }
 
 func (u *Uploader) Do() {
+	// upload fired conversions
 	fmt.Println("hello!")
 }
