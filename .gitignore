@@ -2,3 +2,5 @@
 build/*
 bin/*
 cmd/land/_*
+Supfile.yml
+Taskfile.yaml

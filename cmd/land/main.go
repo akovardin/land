@@ -38,10 +38,12 @@ func routing(
 	app *pocketbase.PocketBase,
 	lc fx.Lifecycle,
 	registry *template.Registry,
+	home *handlers.Home,
 	landing *handlers.Landing,
 	conversions *handlers.Conversions,
 ) {
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		e.Router.GET("/", home.Page)
 
 		e.Router.GET("/l/:name", landing.Home)
 		e.Router.GET("/l/:name/terms", landing.Terms)
