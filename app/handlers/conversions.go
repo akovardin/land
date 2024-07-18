@@ -10,6 +10,11 @@ import (
 	"github.com/pocketbase/pocketbase/models"
 )
 
+const (
+	networkYandex = "yandex"
+	networkVK     = "vk"
+)
+
 type Conversions struct {
 	app *pocketbase.PocketBase
 }
@@ -48,11 +53,16 @@ func (h *Conversions) Fire(c echo.Context) error {
 		return nil
 	}
 
+	network := networkVK
+	if yclid != "" {
+		network = networkYandex
+	}
+
 	record.Set("yclid", yclid)
 	record.Set("rb_clickid", rbclickid)
 	record.Set("key", key)
 	record.Set("uploaded", false)
-	record.Set("network", "vk")
+	record.Set("network", network)
 	record.Set("landing", landing.Id)
 
 	if err := h.app.Dao().SaveRecord(record); err != nil {
