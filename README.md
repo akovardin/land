@@ -9,10 +9,21 @@
 
 ## Использования Яндекс Метрики
 
+Как будет записываться конверсия 
+
+яндекс директ - трекинг линка аппмерики ?yclid=333  - ленд ?yclid=333 - установка приложения - постбек ?yclid=333
++ дополнительно можем отхватить событие в install referrer
+
 - Создаем трекер и грузим конверсии
+
+- Как настроить конверсии в метрике
 
 ## Связываем с Яндекс директом
 
+
+
 https://redirect.appmetrica.yandex.com/serve/821509867285037527?yclid=333
+
+Jul 18 09:03:30 kodazm land[510662]: /l/downloader/fire?client_id=&yclid=14178035617771290623&install_timestamp=1721291374&appmetrica_device_id=11918280336705624214&click_id=&transaction_id=cpi17188142678303156033&match_type=fingerprint&tracker=appmetrica_821509867285037527&rb_clickid=
 
 ## Связываем с VK рекламой

@@ -1,11 +1,13 @@
 package handlers
 
 import (
-	"fmt"
+	"net/http"
 
 	"github.com/labstack/echo/v5"
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase"
-	"go.uber.org/zap"
+	"github.com/pocketbase/pocketbase/apis"
+	"github.com/pocketbase/pocketbase/models"
 )
 
 type Conversions struct {
@@ -19,20 +21,44 @@ func NewConversions(app *pocketbase.PocketBase) *Conversions {
 }
 
 func (h *Conversions) Fire(c echo.Context) error {
-	// make conversions fired
+	h.app.Logger().Info("conversion fire request", "url", c.Request().URL.String())
 
-	// create items
+	slug := c.PathParam("name")
+	landing, err := h.app.Dao().FindFirstRecordByFilter(
+		"landings",
+		"slug = {:slug} && enabled = true",
+		dbx.Params{"slug": slug},
+	)
+	if err != nil {
+		return apis.NewNotFoundError("", err)
+	}
 
-	// https://redirect.appmetrica.yandex.com/serve/821509867285037527?yclid={yclid}
-	// https://redirect.appmetrica.yandex.com/serve/821509867285037527?yclid=444
-	// https://land.kovardin.ru/l/downloader?yclid&rbclickid&referrer=appmetrica_tracking_id%3D821509867285037527%26ym_tracking_id%3D749562427864121681
+	conversions, err := h.app.Dao().FindCollectionByNameOrId("conversions")
+	if err != nil {
+		return apis.NewNotFoundError("", err)
+	}
 
-	// /l/downloader/fire?client_id=&yclid=&install_timestamp=1721163558&appmetrica_device_id=5446207023320664663&click_id=&transaction_id=cpi14539061032550945951&match_type=&tracker=appmetrica_821509867285037527&rb_clickid=
-	// https://yandex.com/support/direct/statistics/url-tags.html
-	// https://appmetrica.yandex.com/docs/en/mobile-tracking/tracking-specification
-	h.app.Logger().Info("fire", zap.Any("url", c.Request().URL.String()))
+	record := models.NewRecord(conversions)
 
-	fmt.Println(c.Request().URL.String())
+	yclid := c.QueryParam("yclid")
+	rbclickid := c.QueryParam("rb_clickid")
+	key := yclid + rbclickid
+
+	if key == "" {
+		return nil
+	}
+
+	record.Set("yclid", yclid)
+	record.Set("rb_clickid", rbclickid)
+	record.Set("key", key)
+	record.Set("uploaded", false)
+	record.Set("network", "vk")
+	record.Set("landing", landing.Id)
+
+	if err := h.app.Dao().SaveRecord(record); err != nil {
+		h.app.Logger().Error("error on save conversions", "error", err)
+		return apis.NewApiError(http.StatusInternalServerError, "error on save", err)
+	}
 
 	return nil
 }

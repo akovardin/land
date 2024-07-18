@@ -1,15 +1,20 @@
 package tasks
 
-import "fmt"
+import (
+	"github.com/pocketbase/pocketbase"
+)
 
 type Uploader struct {
+	app *pocketbase.PocketBase
 }
 
-func NewUploader() *Uploader {
-	return &Uploader{}
+func NewUploader(app *pocketbase.PocketBase) *Uploader {
+	return &Uploader{
+		app: app,
+	}
 }
 
 func (u *Uploader) Do() {
 	// upload fired conversions
-	fmt.Println("hello!")
+	u.app.Logger().Info("upload conversions")
 }

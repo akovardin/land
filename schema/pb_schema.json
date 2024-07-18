@@ -61,6 +61,160 @@
     }
   },
   {
+    "id": "suqffdbnyb2eju6",
+    "name": "conversions",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "orw8kjzi",
+        "name": "ycid",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "t1ynf9bp",
+        "name": "rb_clickid",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "26d09j9w",
+        "name": "key",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "p6cioy6n",
+        "name": "uploaded",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "vwhb5zut",
+        "name": "landing",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "8wrlfn03jlogsnq",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX `idx_VpbOV4q` ON `conversions` (`key`)"
+    ],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
+    "id": "ump73msnqh3zauq",
+    "name": "features",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "dpoyz5g0",
+        "name": "title",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "4kfpx0v7",
+        "name": "description",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "tl16cteq",
+        "name": "enabled",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "o6ht2zdp",
+        "name": "landing",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "8wrlfn03jlogsnq",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      }
+    ],
+    "indexes": [],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
     "id": "rvszh9pn0nthca7",
     "name": "home",
     "type": "base",
@@ -112,6 +266,20 @@
         "system": false,
         "id": "wgoamjva",
         "name": "rustore_link",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "ybvu9s02",
+        "name": "direct_link",
         "type": "text",
         "required": false,
         "presentable": false,
@@ -199,6 +367,20 @@
     "schema": [
       {
         "system": false,
+        "id": "d1m7kjum",
+        "name": "appname",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
         "id": "vdaxgk9v",
         "name": "title",
         "type": "text",
@@ -280,6 +462,16 @@
           "max": null,
           "pattern": ""
         }
+      },
+      {
+        "system": false,
+        "id": "h4hpeoen",
+        "name": "enabled",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
       }
     ],
     "indexes": [],
@@ -411,18 +603,6 @@
     "schema": [
       {
         "system": false,
-        "id": "hqcdrkzw",
-        "name": "content",
-        "type": "editor",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "convertUrls": false
-        }
-      },
-      {
-        "system": false,
         "id": "kvubvw4b",
         "name": "landing",
         "type": "relation",
@@ -435,6 +615,20 @@
           "minSelect": null,
           "maxSelect": 1,
           "displayFields": null
+        }
+      },
+      {
+        "system": false,
+        "id": "wrgf0bsh",
+        "name": "developer",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
         }
       }
     ],
