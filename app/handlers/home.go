@@ -22,6 +22,7 @@ func NewHome(registry *template.Registry) *Home {
 
 func (h *Home) Page(c echo.Context) error {
 	html, err := h.registry.LoadFS(views.FS,
+		"layout.html",
 		"home/page.html",
 	).Render(map[string]any{
 		"slug": "",

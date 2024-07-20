@@ -70,7 +70,7 @@ func (l *Landing) Home(c echo.Context) error {
 	// var rustoreLink = "intent://apps.rustore.ru/app/com.roblox.client#Intent;scheme=rustore;package=ru.vk.store;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.roblox.client%26hl%3Den;end";
 
 	html, err := l.registry.LoadFS(views.FS,
-		"landing/layout.html",
+		"layout.html",
 		"landing/home.html",
 	).Render(map[string]any{
 		"slug":            slug,
@@ -129,7 +129,7 @@ func (l *Landing) Terms(c echo.Context) error {
 	appurl := l.app.Settings().Meta.AppUrl + "/l/" + slug + "terms/"
 
 	html, err := l.registry.LoadFS(views.FS,
-		"landing/layout.html",
+		"layout.html",
 		"landing/terms.html",
 	).Render(map[string]any{
 		"slug":      slug,
@@ -169,7 +169,7 @@ func (l *Landing) Privacy(c echo.Context) error {
 	appurl := l.app.Settings().Meta.AppUrl + "/l/" + slug + "privacy/"
 
 	html, err := l.registry.LoadFS(views.FS,
-		"landing/layout.html",
+		"layout.html",
 		"landing/privacy.html",
 	).Render(map[string]any{
 		"slug":             slug,
