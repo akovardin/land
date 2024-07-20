@@ -65,6 +65,8 @@ func (l *Landing) Home(c echo.Context) error {
 	parts, _ := url.Parse(link)
 	base := path.Base(parts.Path)
 
+	img := home.GetString("image")
+
 	// var rustoreLink = "intent://apps.rustore.ru/app/com.roblox.client#Intent;scheme=rustore;package=ru.vk.store;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.roblox.client%26hl%3Den;end";
 
 	html, err := l.registry.LoadFS(views.FS,
@@ -77,6 +79,8 @@ func (l *Landing) Home(c echo.Context) error {
 		"metaKeywords":    landing.GetString("keywords"),
 		"title":           home.GetString("title"),
 		"description":     home.GetString("description"),
+		"cta":             home.GetString("cta"),
+		"image":           "/api/files/home/" + home.Id + "/" + img,
 
 		// links
 		"link":        link,

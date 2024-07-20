@@ -138,12 +138,12 @@ if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, fal
             </script>
 
 
-            <a id="download-button" class="btn btn-primary btn-lg" role="button" href="intent://apps.rustore.ru/app/com.roblox.client#Intent;scheme=rustore;package=ru.vk.store;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.roblox.client%26hl%3Den;end">Скачать приложение</a>
+            <a id="download-button" class="btn btn-primary btn-lg" role="button" href="{{.link}}">{{.cta}}</a>
 
           </div>
           
           <div class="col text-center">
-            <img src="/static/img/header.png" class="main-img"/>
+            <img src="{{.image}}?thumb=400x0" class="main-img"/>
 
           </div>
       </div>
