@@ -9,12 +9,10 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
-	"github.com/pocketbase/pocketbase/tools/cron"
 	"github.com/pocketbase/pocketbase/tools/template"
 	"go.uber.org/fx"
 
 	"gohome.4gophers.ru/kovardin/land/app/handlers"
-	"gohome.4gophers.ru/kovardin/land/app/tasks"
 	"gohome.4gophers.ru/kovardin/land/static"
 )
 
@@ -24,12 +22,8 @@ func main() {
 
 		fx.Provide(pocketbase.New),
 		fx.Provide(template.NewRegistry),
-		fx.Provide(tasks.NewUploader),
 		fx.Invoke(
 			routing,
-		),
-		fx.Invoke(
-			task,
 		),
 	).Run()
 }
@@ -40,7 +34,6 @@ func routing(
 	registry *template.Registry,
 	home *handlers.Home,
 	landing *handlers.Landing,
-	conversions *handlers.Conversions,
 ) {
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		e.Router.GET("/", home.Page)
@@ -48,7 +41,6 @@ func routing(
 		e.Router.GET("/l/:name", landing.Home)
 		e.Router.GET("/l/:name/terms", landing.Terms)
 		e.Router.GET("/l/:name/privacy", landing.Privacy)
-		e.Router.GET("/l/:name/fire", conversions.Fire)
 
 		e.Router.GET("/static/*", func(c echo.Context) error {
 			p := c.PathParam("*")
@@ -79,20 +71,5 @@ func routing(
 		OnStop: func(ctx context.Context) error {
 			return nil
 		},
-	})
-}
-
-func task(app *pocketbase.PocketBase, uploader *tasks.Uploader) {
-	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		scheduler := cron.New()
-
-		// prints "Hello!" every 2 minutes
-		scheduler.MustAdd("hello", "*/2 * * * *", func() {
-			uploader.Do()
-		})
-
-		scheduler.Start()
-
-		return nil
 	})
 }
