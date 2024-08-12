@@ -60,10 +60,10 @@ func (l *Landing) Home(c echo.Context) error {
 		features = []*models.Record{}
 	}
 
-	link := home.GetString("rustore_link")
+	rustoreLink := home.GetString("rustore_link")
 
-	parts, _ := url.Parse(link)
-	base := path.Base(parts.Path)
+	parts, _ := url.Parse(rustoreLink)
+	bundleName := path.Base(parts.Path)
 
 	img := home.GetString("image")
 
@@ -83,8 +83,8 @@ func (l *Landing) Home(c echo.Context) error {
 		"image":           "/api/files/home/" + home.Id + "/" + img,
 
 		// links
-		"link":        link,
-		"base":        base,
+		"rustoreLink": rustoreLink,
+		"bundleName":  bundleName,
 		"androidLink": home.GetString("android_link"),
 		"huaweiLink":  home.GetString("huawei_link"),
 		"directLink":  home.GetString("direct_link"),
