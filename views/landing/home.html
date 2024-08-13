@@ -40,7 +40,7 @@ if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, fal
       var expires = "; expires=" + date.toGMTString();
       document.cookie = name + "=" + value + expires + ";path=/";
   }
-  
+
   function getParam(p){
       var match = RegExp('[?&]' + p + '=([^&]*)').exec(window.location.search);
       return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
@@ -164,4 +164,15 @@ if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, fal
       {{end}}
 
     </div>
+
+<!-- Yandex.RTB R-A-11349933-1 -->
+<script>
+window.yaContextCb.push(() => {
+    Ya.Context.AdvManager.render({
+        "blockId": "R-A-11349933-1",
+        "type": "floorAd",
+        "platform": "touch"
+    })
+})
+</script>
 {{end}}
