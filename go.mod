@@ -1,4 +1,4 @@
-module gohome.4gophers.ru/kovardin/land
+module gohome.4gophers.ru/kovardin/zenit
 
 go 1.22.2
 

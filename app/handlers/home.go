@@ -7,7 +7,7 @@ import (
 	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/tools/template"
 
-	"gohome.4gophers.ru/kovardin/land/views"
+	"gohome.4gophers.ru/kovardin/zenit/views"
 )
 
 type Home struct {

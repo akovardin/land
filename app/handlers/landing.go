@@ -13,7 +13,7 @@ import (
 	"github.com/pocketbase/pocketbase/tools/template"
 	"go.uber.org/zap"
 
-	"gohome.4gophers.ru/kovardin/land/views"
+	"gohome.4gophers.ru/kovardin/zenit/views"
 )
 
 type Landing struct {
